@@ -16,11 +16,11 @@ permissions:
 jobs:
   edge:
     if: github.event_name == 'push'
-    uses: DaemonCores/DaemonCores-CI/.github/workflows/release.yml@main
+    uses: EdwardWoodhub/DaemonCores-CI/.github/workflows/release.yml@main
     with:
       channel: edge
   stable:
     if: github.event_name == 'workflow_dispatch'
-    uses: DaemonCores/DaemonCores-CI/.github/workflows/release.yml@main
+    uses: EdwardWoodhub/DaemonCores-CI/.github/workflows/release.yml@main
     with:
       channel: stable

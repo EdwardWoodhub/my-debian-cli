@@ -38,7 +38,7 @@ concurrency:
 
 jobs:
   run:
-    uses: DaemonCores/DaemonCores-CI/.github/workflows/full-pipeline.yml@main
+    uses: EdwardWoodhub/DaemonCores-CI/.github/workflows/full-pipeline.yml@main
     with:
       enable_base: true
       update_base: ${{ inputs.update_base }}

@@ -21,6 +21,6 @@ concurrency:
 
 jobs:
   lint:
-    uses: DaemonCores/DaemonCores-CI/.github/workflows/lint.yml@main
+    uses: EdwardWoodhub/DaemonCores-CI/.github/workflows/lint.yml@main
     with:
       make-targets: check
