@@ -1,0 +1,55 @@
+name: Build CLI ISO
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: read
+
+jobs:
+  build-iso:
+    name: Build Installer ISO (amd64)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull target bootc image
+        run: |
+          sudo podman pull ghcr.io/edwardwoodhub/my-debian-cli:latest
+
+      - name: Build ISO with bootc-image-builder
+        run: |
+          mkdir -p output
+          sudo podman run --rm --privileged \
+            --security-opt label=type:unconfined_t \
+            -v /var/lib/containers/storage:/var/lib/containers/storage \
+            -v "$(pwd)/output:/output" \
+            quay.io/centos-bootc/bootc-image-builder:latest \
+            --type anaconda-iso \
+            --rootfs btrfs \
+            ghcr.io/edwardwoodhub/my-debian-cli:latest
+
+      - name: Rename and checksum ISO
+        run: |
+          ISO_FILE=$(find output -name "*.iso" | head -n1)
+          mv "$ISO_FILE" output/my-debian-cli-amd64.iso
+          (cd output && sha256sum my-debian-cli-amd64.iso > my-debian-cli-amd64.iso.sha256)
+          ls -lh output/
+
+      - name: Upload ISO to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: install-iso
+          name: install-iso
+          files: |
+            output/my-debian-cli-amd64.iso
+            output/my-debian-cli-amd64.iso.sha256
