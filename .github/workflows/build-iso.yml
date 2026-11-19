@@ -31,8 +31,11 @@ jobs:
         run: |
           mkdir -p output
           sudo podman run --rm --privileged \
-            --security-opt label=type:unconfined_t \
+            --security-opt apparmor=unconfined \
+            --security-opt seccomp=unconfined \
+            --security-opt label=disable \
             -v /var/lib/containers/storage:/var/lib/containers/storage \
+            -v /dev:/dev \
             -v "$(pwd)/output:/output" \
             quay.io/centos-bootc/bootc-image-builder:latest \
             --type anaconda-iso \
