@@ -35,11 +35,6 @@ tests:
       systemctl --failed --no-pager 2>&1
 
   # ── your image ─────────────────────────────────────────────────────────
-  - name: example package installed
-    run: test -f /usr/share/example-package/README
-    diag: |
-      dpkg -l example-package 2>&1
-      ls -la /usr/share/example-package/ 2>&1
   - name: example overlay file present
     run: test -f /usr/share/example-overlay/README
     diag: |

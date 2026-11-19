@@ -29,11 +29,4 @@ packages:
     build: |
       deb_custom "${PKG}" "${PKG_VER}" "${PKG}"
     deb-glob: "{variant}_*"
-    variants:
-      # Replace this example with your own packages (and the directory of the
-      # same name next to this file). {{ VER }} and {{ DEPS }} in DEBIAN/control
-      # are filled in by the builder.
-      example-package:
-        env:
-          PKG: example-package
-          PKG_VER: 1.0.0
+    variants: {}

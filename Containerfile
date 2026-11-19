@@ -32,8 +32,6 @@ COPY ./src/overlay /
 # Packages: Debian ones, and the ones built by this repository from
 # workflows/bootc-debs-builder (see packages.yml). Replace the example.
 RUN apt update \
-    && apt install -y \
-        example-package \
     && apt clean
 
 # bootc images are updated in-place via ostree; no runtime healthcheck applies.
