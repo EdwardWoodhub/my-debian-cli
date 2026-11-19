@@ -15,6 +15,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Configure host for osbuild privileged mounts
+        run: |
+          sudo mkdir -p /run/osbuild
+          sudo mount --bind /run/osbuild /run/osbuild
+          sudo mount --make-shared /run/osbuild
+          # 解除 Ubuntu 24.04 Runner 对 unprivileged userns 和 crun/podman 的 AppArmor 挂载限制
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+          sudo aa-teardown || true
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
@@ -31,10 +40,12 @@ jobs:
         run: |
           mkdir -p output
           sudo podman run --rm --privileged \
+            --pid=host \
             --security-opt apparmor=unconfined \
             --security-opt seccomp=unconfined \
             --security-opt label=disable \
             -v /var/lib/containers/storage:/var/lib/containers/storage \
+            -v /run/osbuild:/run/osbuild:rshared \
             -v /dev:/dev \
             -v "$(pwd)/output:/output" \
             quay.io/centos-bootc/bootc-image-builder:latest \
