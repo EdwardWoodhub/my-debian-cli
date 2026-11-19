@@ -53,5 +53,5 @@ RUN mkdir -p /etc/dracut.conf.d \
     && KVER=$(ls -1 /usr/lib/modules | head -n 1) \
     && test -n "$KVER" \
     && dracut --force --no-hostonly --add "ostree" --kver "$KVER" "/usr/lib/modules/$KVER/initramfs.img" \
-    && rm -rf /boot/* /var/tmp/* \
+    && find /boot /var/tmp -mindepth 1 -delete \
     && bootc container lint
