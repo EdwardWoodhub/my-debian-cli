@@ -37,7 +37,7 @@ on:
       run_debs:
         description: 'Build .deb packages'
         type: boolean
-        default: true
+        default: false
       run_iso:
         description: 'Build ISO'
         type: boolean
