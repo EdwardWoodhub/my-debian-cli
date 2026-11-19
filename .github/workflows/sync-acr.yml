@@ -11,15 +11,11 @@ jobs:
   sync-to-acr:
     if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       packages: read
       contents: read
     steps:
-      - name: Install skopeo
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq skopeo
-
       - name: Login to GHCR and Aliyun ACR
         env:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -30,15 +26,21 @@ jobs:
           echo "$GHCR_TOKEN" | skopeo login ghcr.io -u "${{ github.actor }}" --password-stdin
           echo "$ACR_PASSWORD" | skopeo login "$ACR_REGISTRY" -u "$ACR_USERNAME" --password-stdin
 
-      - name: Mirror multi-arch OCI manifest to Aliyun ACR
+      - name: Pull multi-arch image from GHCR to local OCI layout
+        run: |
+          mkdir -p /tmp/oci-image
+          skopeo copy --all --retry-times 3 \
+            "docker://ghcr.io/edwardwoodhub/my-debian-cli:latest" \
+            "oci:/tmp/oci-image:latest"
+
+      - name: Push local OCI layout to Aliyun ACR
         env:
           ACR_REGISTRY: ${{ secrets.ALIYUN_ACR_REGISTRY }}
           ACR_NAMESPACE: ${{ secrets.ALIYUN_ACR_NAMESPACE }}
         run: |
-          SRC_IMAGE="docker://ghcr.io/edwardwoodhub/my-debian-cli:latest"
           DEST_IMAGE="docker://${ACR_REGISTRY}/${ACR_NAMESPACE}/my-debian-cli:latest"
-          echo "Syncing $SRC_IMAGE -> $DEST_IMAGE ..."
-          skopeo copy --all --retry-times 3 "$SRC_IMAGE" "$DEST_IMAGE"
+          skopeo copy --all --image-parallel-copies=2 --retry-times 5 \
+            "oci:/tmp/oci-image:latest" \
+            "$DEST_IMAGE"
           echo "### Aliyun ACR Sync Summary" >> "$GITHUB_STEP_SUMMARY"
-          echo "- **Source**: \`ghcr.io/edwardwoodhub/my-debian-cli:latest\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Target**: \`${ACR_REGISTRY}/${ACR_NAMESPACE}/my-debian-cli:latest\`" >> "$GITHUB_STEP_SUMMARY"
