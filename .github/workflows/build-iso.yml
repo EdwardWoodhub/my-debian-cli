@@ -37,7 +37,7 @@ jobs:
 
       - name: Build ISO with bootc-image-builder
         run: |
-          mkdir -p output
+          sudo mkdir -p output
           sudo podman run --rm --privileged \
             --pid=host \
             --security-opt apparmor=unconfined \
@@ -49,7 +49,6 @@ jobs:
             -v "$(pwd)/output:/output" \
             quay.io/centos-bootc/bootc-image-builder:latest \
             --type anaconda-iso \
-            --rootfs btrfs \
             --installer-payload-ref ghcr.io/edwardwoodhub/my-debian-cli:latest \
             quay.io/centos-bootc/centos-bootc:stream10
 
