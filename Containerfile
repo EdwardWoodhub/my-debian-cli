@@ -14,15 +14,11 @@ SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 
 COPY ./src/overlay /
 
-# 预装 install-fs.sh 所需的工具，并修复容器环境下 grub-efi-amd64-signed postinst 报错
-RUN apt-get update \
+# 锁定基础镜像自带的 bootupd (0.3.2)，防止升级到有 metadata 缺陷的 0.4.0
+RUN apt-mark hold bootupd \
+    && apt-get update \
     && apt-get install -y --no-install-recommends \
          fdisk parted dosfstools podman skopeo openssh-server \
-    && (apt-get install -y --no-install-recommends bootupd || { \
-         sed -i 's/^set -e/set -e\nexit 0/' /var/lib/dpkg/info/grub-efi-amd64-signed.postinst 2>/dev/null || true; \
-         sed -i 's/^set -e/set -e\nexit 0/' /var/lib/dpkg/info/shim-signed.postinst 2>/dev/null || true; \
-         dpkg --configure -a; \
-       }) \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
