@@ -1,21 +1,5 @@
 name: Full Pipeline
 
-# Thin caller: this repo only declares its triggers and concurrency. The whole
-# job graph (change plan / auto-skip, optional base rebuild, env, debs, image,
-# iso) lives in the shared reusable workflow
-# DaemonCores-CI/.github/workflows/full-pipeline.yml.
-#
-# Triggers:
-#   push (main)        full pipeline, but untouched stages auto-skip (the plan
-#                      job diffs the push) on top of the per-deb content cache.
-#   workflow_dispatch  the checkboxes decide, verbatim.
-#   schedule (monthly) rebuild everything.
-#
-# concurrency cancels an in-progress run when a newer push arrives (triggers and
-# concurrency must live in the caller — GitHub evaluates them here, not in the
-# reusable workflow). `update_base` (rebuild the debian-bootc base) is a
-# manual-dispatch-only knob; a push never triggers it.
-
 on:
   push:
     branches: [main]
@@ -69,4 +53,6 @@ jobs:
       run_debs: ${{ inputs.run_debs }}
       run_image: ${{ inputs.run_image }}
       run_iso: ${{ inputs.run_iso }}
+      run_img_rpi: 'false'
+      run_img_gallium: 'false'
     secrets: inherit
