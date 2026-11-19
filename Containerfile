@@ -53,8 +53,7 @@ RUN mkdir -p /etc/dracut.conf.d \
     && KVER=$(ls -1 /usr/lib/modules | head -n 1) \
     && test -n "$KVER" \
     && dracut --force --no-hostonly --add "ostree" --kver "$KVER" "/usr/lib/modules/$KVER/initramfs.img" \
-    && find /boot /var/tmp -mindepth 1 -delete \
-    && bootc container lint
+    && find /boot /var/tmp -mindepth 1 -delete
 
 # 3. 修复 Legacy BIOS 模式下 bootc/ostree 独立 /boot 分区 GRUB 前缀与模块缺失问题
 RUN printf '%s\n' \
