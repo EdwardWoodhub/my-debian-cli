@@ -27,3 +27,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 HEALTHCHECK NONE
+
+RUN mkdir -p /etc/dracut.conf.d && \
+    printf 'hostonly="no"\nadd_drivers+=" xfs ext4 btrfs mptspi mptsas vmw_pvscsi nvme ahci virtio_blk virtio_pci sd_mod "\n' > /etc/dracut.conf.d/99-universal-boot.conf && \
+    KVER=$(ls /usr/lib/modules | head -n 1) && \
+    dracut --force --kver "$KVER" "/usr/lib/modules/$KVER/initramfs.img"
