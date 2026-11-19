@@ -17,8 +17,27 @@ COPY ./src/overlay /
 # 1. 预装 install-fs.sh 所需的工具及 dracut 驱动打包工具，确保 bootupd 位于标准 PATH
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-         fdisk parted dosfstools podman skopeo openssh-server \
-         dracut-core dracut-network \
+         btop \
+         dosfstools \
+         dracut-core \
+         dracut-network \
+         fdisk \
+         fastfetch \
+         htop \
+         iotop \
+         iputils-ping \
+         jq \
+         ncdu \
+         net-tools \
+         openssh-server \
+         open-vm-tools \
+         parted \
+         podman \
+         rsync \
+         skopeo \
+         tmux \
+         tree \
+         vim \
     && BOOTUPD_BIN=$(find /usr -name bootupd -type f -executable 2>/dev/null | head -n1) \
     && if [ -n "$BOOTUPD_BIN" ] && ! command -v bootupd >/dev/null 2>&1; then \
          ln -sf "$BOOTUPD_BIN" /usr/local/bin/bootupd; \
