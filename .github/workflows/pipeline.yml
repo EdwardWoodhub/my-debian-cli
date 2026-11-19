@@ -1,13 +1,6 @@
 name: Full Pipeline
 
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - docs
-      - '**.md'
-  schedule:
-    - cron: '0 5 1 * *'
   workflow_dispatch:
     inputs:
       update_base:
