@@ -20,7 +20,6 @@ jobs:
           sudo mkdir -p /run/osbuild
           sudo mount --bind /run/osbuild /run/osbuild
           sudo mount --make-shared /run/osbuild
-          # 解除 Ubuntu 24.04 Runner 对 unprivileged userns 和 crun/podman 的 AppArmor 挂载限制
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
           sudo aa-teardown || true
 
@@ -56,6 +55,7 @@ jobs:
 
       - name: Rename and checksum ISO
         run: |
+          sudo chown -R "$(id -u):$(id -g)" output
           ISO_FILE=$(find output -name "*.iso" | head -n1)
           mv "$ISO_FILE" output/my-debian-cli-amd64.iso
           (cd output && sha256sum my-debian-cli-amd64.iso > my-debian-cli-amd64.iso.sha256)
