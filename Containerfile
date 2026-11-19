@@ -14,11 +14,15 @@ SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 
 COPY ./src/overlay /
 
-# 锁定基础镜像自带的 bootupd (0.3.2)，防止升级到有 metadata 缺陷的 0.4.0
-RUN apt-mark hold bootupd \
-    && apt-get update \
+# 1. 预装 install-fs.sh 所需的工具，并确保 bootupd 位于标准 PATH (/usr/local/bin/bootupd)
+#    使 install-fs.sh 的 `command -v bootupd` 直接命中，不再触发 apt-get install 升级 bootupd 到有缺陷的 0.4.0
+RUN apt-get update \
     && apt-get install -y --no-install-recommends \
          fdisk parted dosfstools podman skopeo openssh-server \
+    && BOOTUPD_BIN=$(find /usr -name bootupd -type f -executable 2>/dev/null | head -n1) \
+    && if [ -n "$BOOTUPD_BIN" ] && ! command -v bootupd >/dev/null 2>&1; then \
+         ln -sf "$BOOTUPD_BIN" /usr/local/bin/bootupd; \
+       fi \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
