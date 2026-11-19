@@ -62,10 +62,8 @@ jobs:
           ls -lh output/
 
       - name: Upload ISO to GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: install-iso
-          name: install-iso
-          files: |
-            output/my-debian-cli-amd64.iso
-            output/my-debian-cli-amd64.iso.sha256
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release view install-iso >/dev/null 2>&1 || gh release create install-iso --title "install-iso" --notes "Bootable CLI installer ISO for my-debian-cli"
+          gh release upload install-iso output/my-debian-cli-amd64.iso output/my-debian-cli-amd64.iso.sha256 --clobber
