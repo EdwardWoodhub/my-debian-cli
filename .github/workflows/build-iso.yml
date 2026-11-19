@@ -22,8 +22,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Pull target bootc image
+      - name: Pull installer base and target Debian bootc image
         run: |
+          sudo podman pull quay.io/centos-bootc/centos-bootc:stream10
           sudo podman pull ghcr.io/edwardwoodhub/my-debian-cli:latest
 
       - name: Build ISO with bootc-image-builder
@@ -36,7 +37,8 @@ jobs:
             quay.io/centos-bootc/bootc-image-builder:latest \
             --type anaconda-iso \
             --rootfs btrfs \
-            ghcr.io/edwardwoodhub/my-debian-cli:latest
+            --installer-payload-ref ghcr.io/edwardwoodhub/my-debian-cli:latest \
+            quay.io/centos-bootc/centos-bootc:stream10
 
       - name: Rename and checksum ISO
         run: |
