@@ -24,7 +24,7 @@
 # `latest` on purpose: this image follows the published base, and its digest is
 # part of the content hash above, so a new base rebuilds the image.
 # hadolint ignore=DL3007
-FROM ghcr.io/daemoncores/debian-bootc:latest
+FROM ghcr.io/edwardwoodhub/my-debian-bootc:latest
 STOPSIGNAL SIGRTMIN+3
 ENV DEBIAN_FRONTEND=noninteractive
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]

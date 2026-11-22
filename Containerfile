@@ -4,7 +4,7 @@ STOPSIGNAL SIGRTMIN+3
 
 ARG PRODUCT_NAME=""
 LABEL org.opencontainers.image.title="${PRODUCT_NAME}"
-LABEL org.opencontainers.image.base.name="ghcr.io/daemoncores/debian-bootc:latest"
+LABEL org.opencontainers.image.base.name="ghcr.io/edwardwoodhub/my-debian-bootc:latest"
 LABEL org.opencontainers.image.licenses="LGPL-2.1"
 LABEL containers.bootc=1
 LABEL ostree.bootable=1

@@ -5,7 +5,7 @@ SHELL := /bin/bash -euo pipefail
 # Shared checks live in DaemonCores-CI. CI exports CI_REPO itself; locally the
 # `ci-repo` target clones it into the untracked .ci/ directory on first use.
 CI_REPO ?= .ci
-CI_REPO_URL ?= https://github.com/DaemonCores/DaemonCores-CI.git
+CI_REPO_URL ?= https://github.com/EdwardWoodhub/DaemonCores-CI.git
 
 CONTAINERFILES := $(wildcard Containerfile Containerfile.*)
 YAML_SRCS := $(shell find . -path ./.git -prune -o -path ./.ci -prune -o \( -name '*.yml' -o -name '*.yaml' \) -print)
